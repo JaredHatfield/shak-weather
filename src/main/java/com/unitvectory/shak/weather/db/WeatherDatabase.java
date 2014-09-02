@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,10 +57,36 @@ public class WeatherDatabase {
 	 * the insert query
 	 */
 	private static final String InsertWeatherQuery = "INSERT INTO home_weather "
-			+ "(location, time, summary, added, updated) "
-			+ "VALUES (?, ?, ?, NOW(), NOW()) "
+			+ "(location, time, summary, icon, sunriseTime, sunsetTime, "
+			+ "precipIntensity, precipIntensityMax, precipProbability, "
+			+ "precipType, temperatureMin, temperatureMinTime, temperatureMax, "
+			+ "temperatureMaxTime, apparentTemperatureMin, apparentTemperatureMinTime, "
+			+ "apparentTemperatureMax, apparentTemperatureMaxTime, dewPoint, "
+			+ "humidity, windSpeed, windBearing, visibility, cloudCover, "
+			+ "pressure, ozone, added, updated) "
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+			+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW()) "
 			+ "ON DUPLICATE KEY UPDATE "
-			+ "summary = VALUES(summary), updated = NOW() ";
+			+ "summary = VALUES(summary), icon = VALUES(icon), "
+			+ "sunriseTime = VALUES(sunriseTime), "
+			+ "sunsetTime = VALUES(sunsetTime), "
+			+ "precipIntensity = VALUES(precipIntensity), "
+			+ "precipIntensityMax = VALUES(precipIntensityMax), "
+			+ "precipProbability = VALUES(precipProbability), "
+			+ "precipType = VALUES(precipType), "
+			+ "temperatureMin = VALUES(temperatureMin), "
+			+ "temperatureMinTime = VALUES(temperatureMinTime), "
+			+ "temperatureMax = VALUES(temperatureMax), "
+			+ "temperatureMaxTime = VALUES(temperatureMaxTime), "
+			+ "apparentTemperatureMin = VALUES(apparentTemperatureMin), "
+			+ "apparentTemperatureMinTime = VALUES(apparentTemperatureMinTime), "
+			+ "apparentTemperatureMax = VALUES(apparentTemperatureMax), "
+			+ "apparentTemperatureMaxTime = VALUES(apparentTemperatureMaxTime), "
+			+ "dewPoint = VALUES(dewPoint), humidity = VALUES(humidity), "
+			+ "windSpeed = VALUES(windSpeed), windBearing = VALUES(windBearing), "
+			+ "visibility = VALUES(visibility), cloudCover = VALUES(cloudCover), "
+			+ "pressure = VALUES(pressure), ozone = VALUES(ozone), "
+			+ "updated = NOW() ";
 
 	/**
 	 * Inserts a weather event
@@ -76,9 +103,33 @@ public class WeatherDatabase {
 		try {
 			con = this.dataSource.getConnection();
 			stmt = con.prepareStatement(InsertWeatherQuery);
-			stmt.setInt(1, location);
-			stmt.setTimestamp(2, new Timestamp(day.getLong("time") * 1000));
-			stmt.setString(3, day.getString("summary"));
+			int field = 1;
+			stmt.setInt(field++, location);
+			this.setTimestamp(stmt, day, field++, "time");
+			this.setString(stmt, day, field++, "summary");
+			this.setString(stmt, day, field++, "icon");
+			this.setTimestamp(stmt, day, field++, "sunriseTime");
+			this.setTimestamp(stmt, day, field++, "sunsetTime");
+			this.setDouble(stmt, day, field++, "precipIntensity");
+			this.setDouble(stmt, day, field++, "precipIntensityMax");
+			this.setDouble(stmt, day, field++, "precipProbability");
+			this.setString(stmt, day, field++, "precipType");
+			this.setDouble(stmt, day, field++, "temperatureMin");
+			this.setTimestamp(stmt, day, field++, "temperatureMinTime");
+			this.setDouble(stmt, day, field++, "temperatureMax");
+			this.setTimestamp(stmt, day, field++, "temperatureMaxTime");
+			this.setDouble(stmt, day, field++, "apparentTemperatureMin");
+			this.setTimestamp(stmt, day, field++, "apparentTemperatureMinTime");
+			this.setDouble(stmt, day, field++, "apparentTemperatureMax");
+			this.setTimestamp(stmt, day, field++, "apparentTemperatureMaxTime");
+			this.setDouble(stmt, day, field++, "dewPoint");
+			this.setDouble(stmt, day, field++, "humidity");
+			this.setDouble(stmt, day, field++, "windSpeed");
+			this.setDouble(stmt, day, field++, "windBearing");
+			this.setDouble(stmt, day, field++, "visibility");
+			this.setDouble(stmt, day, field++, "cloudCover");
+			this.setDouble(stmt, day, field++, "pressure");
+			this.setDouble(stmt, day, field++, "ozone");
 			stmt.executeUpdate();
 			return true;
 		} catch (SQLException e) {
@@ -130,6 +181,75 @@ public class WeatherDatabase {
 	}
 
 	/**
+	 * Sets the string from the JSON object
+	 * 
+	 * @param stmt
+	 *            the statement
+	 * @param json
+	 *            the json
+	 * @param num
+	 *            the field number
+	 * @param field
+	 *            the field name
+	 * @throws SQLException
+	 * @throws JSONException
+	 */
+	private void setString(PreparedStatement stmt, JSONObject json, int num,
+			String field) throws SQLException, JSONException {
+		if (json.has(field)) {
+			stmt.setString(num, json.getString(field));
+		} else {
+			stmt.setNull(num, Types.VARCHAR);
+		}
+	}
+
+	/**
+	 * Sets the double from the JSON object
+	 * 
+	 * @param stmt
+	 *            the statement
+	 * @param json
+	 *            the json
+	 * @param num
+	 *            the field number
+	 * @param field
+	 *            the field name
+	 * @throws SQLException
+	 * @throws JSONException
+	 */
+	private void setDouble(PreparedStatement stmt, JSONObject json, int num,
+			String field) throws SQLException, JSONException {
+		if (json.has(field)) {
+			stmt.setDouble(num, json.getDouble(field));
+		} else {
+			stmt.setNull(num, Types.DOUBLE);
+		}
+	}
+
+	/**
+	 * Sets the timestamp from the JSON object
+	 * 
+	 * @param stmt
+	 *            the statement
+	 * @param json
+	 *            the json
+	 * @param num
+	 *            the field number
+	 * @param field
+	 *            the field name
+	 * @throws SQLException
+	 * @throws JSONException
+	 */
+	private void setTimestamp(PreparedStatement stmt, JSONObject json, int num,
+			String field) throws SQLException, JSONException {
+		if (json.has(field)) {
+			stmt.setTimestamp(num, new Timestamp(json.getLong("time") * 1000));
+		} else {
+			stmt.setNull(num, Types.TIMESTAMP);
+		}
+	}
+
+	/**
 	 * Closes everything.
 	 * 
 	 * @param con
@@ -139,7 +259,7 @@ public class WeatherDatabase {
 	 * @param rs
 	 *            the result set
 	 */
-	protected void closeEverything(Connection con, Statement stmt, ResultSet rs) {
+	private void closeEverything(Connection con, Statement stmt, ResultSet rs) {
 		if (rs != null) {
 			try {
 				rs.close();
