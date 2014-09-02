@@ -35,6 +35,7 @@ public class App {
 	public static void main(String[] args) {
 		// create the parser
 		org.apache.commons.cli.CommandLineParser parser = new BasicParser();
+		ForecastCron cron = null;
 		try {
 			// The required options
 			Options options = new Options();
@@ -54,8 +55,13 @@ public class App {
 				return;
 			}
 
+			// Process the cron
+			cron = new ForecastCron(config);
+			cron.process();
 		} catch (ParseException exp) {
 			System.err.println("Parsing failed.  Reason: " + exp.getMessage());
+		} catch (Exception e) {
+			log.error("Failed", e);
 		}
 	}
 }

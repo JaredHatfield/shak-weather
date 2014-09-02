@@ -41,6 +41,12 @@ public class AppConfig {
 	private String dbUrl;
 
 	/**
+	 * the forecast.io API key
+	 */
+	@Element(name = "forecastio")
+	private String forecastIo;
+
+	/**
 	 * Creates a new instance of the AppConfig class.
 	 */
 	public AppConfig() {
@@ -65,6 +71,13 @@ public class AppConfig {
 	 */
 	public String getDbUrl() {
 		return dbUrl;
+	}
+
+	/**
+	 * @return the forecastIo
+	 */
+	public String getForecastIo() {
+		return forecastIo;
 	}
 
 	/**
