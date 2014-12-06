@@ -3,9 +3,9 @@ package com.unitvectory.shak.weather;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import com.amazonaws.util.json.JSONArray;
-import com.amazonaws.util.json.JSONObject;
 import com.unitvectory.shak.weather.db.WeatherDatabase;
 import com.unitvectory.shak.weather.db.model.LocationInfo;
 import com.unitvectory.shak.weather.forecastio.ForecastIO;
