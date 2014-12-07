@@ -3,7 +3,7 @@ package com.unitvectory.shak.weather.forecastio;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -53,7 +53,7 @@ public class ForecastIO {
 	public JSONObject getWeather(double latitude, double longitude) {
 		String url = baseUrl + this.apiKey + "/" + latitude + "," + longitude;
 		try {
-			HttpClient client = new DefaultHttpClient();
+			HttpClient client = HttpClientBuilder.create().build();
 			HttpGet get = new HttpGet(url);
 			HttpResponse response = client.execute(get);
 			if (response.getStatusLine().getStatusCode() == 200) {
