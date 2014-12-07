@@ -12,9 +12,9 @@ import java.util.List;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
+import com.amazonaws.util.json.JSONException;
+import com.amazonaws.util.json.JSONObject;
 import com.unitvectory.shak.weather.AppConfig;
 import com.unitvectory.shak.weather.db.model.LocationInfo;
 

@@ -6,7 +6,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
+
+import com.amazonaws.util.json.JSONObject;
 
 /**
  * The forecast.io client.
