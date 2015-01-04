@@ -278,6 +278,7 @@ public class WeatherDatabase {
 			try {
 				rs.close();
 			} catch (SQLException e) {
+				log.warn("error closing result set.", e);
 			}
 		}
 
@@ -285,6 +286,7 @@ public class WeatherDatabase {
 			try {
 				stmt.close();
 			} catch (SQLException e) {
+				log.warn("error closing statement.", e);
 			}
 		}
 
@@ -292,6 +294,7 @@ public class WeatherDatabase {
 			try {
 				con.close();
 			} catch (SQLException e) {
+				log.warn("error closing connection.", e);
 			}
 		}
 	}
