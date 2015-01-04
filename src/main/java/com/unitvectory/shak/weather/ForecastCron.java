@@ -65,4 +65,15 @@ public class ForecastCron {
 			}
 		}
 	}
+
+	/**
+	 * Close the connection
+	 */
+	public void close() {
+		try {
+			this.database.close();
+		} catch (Exception e) {
+			log.error("Failed to close.", e);
+		}
+	}
 }

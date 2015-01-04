@@ -62,6 +62,10 @@ public class App {
 			System.err.println("Parsing failed.  Reason: " + exp.getMessage());
 		} catch (Exception e) {
 			log.error("Failed", e);
+		} finally {
+			if (cron != null) {
+				cron.close();
+			}
 		}
 	}
 }

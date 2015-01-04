@@ -1,5 +1,6 @@
 package com.unitvectory.shak.weather.db;
 
+import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,11 +11,11 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 
 import com.amazonaws.util.json.JSONException;
 import com.amazonaws.util.json.JSONObject;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.unitvectory.shak.weather.AppConfig;
 import com.unitvectory.shak.weather.db.model.LocationInfo;
 
@@ -34,7 +35,7 @@ public class WeatherDatabase {
 	/**
 	 * the data source
 	 */
-	private BasicDataSource dataSource;
+	private ComboPooledDataSource dataSource;
 
 	/**
 	 * Creates a new instance of the WeatherDataabse class.
@@ -44,13 +45,19 @@ public class WeatherDatabase {
 	 */
 	public WeatherDatabase(AppConfig config) {
 		// Connect to the database
-		this.dataSource = new BasicDataSource();
-		this.dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-		this.dataSource.setValidationQuery("SELECT 1");
-		this.dataSource.setUsername(config.getDbUser());
+		this.dataSource = new ComboPooledDataSource();
+		try {
+			this.dataSource.setDriverClass("com.mysql.jdbc.Driver");
+		} catch (PropertyVetoException e) {
+			log.error("Unable to load MySQL database driver.", e);
+		}
+
+		this.dataSource.setPreferredTestQuery("SELECT 1");
+		this.dataSource.setUser(config.getDbUser());
 		this.dataSource.setPassword(config.getDbPassword());
-		this.dataSource.setUrl(config.getDbUrl());
-		this.dataSource.setInitialSize(1);
+		this.dataSource.setJdbcUrl(config.getDbUrl());
+		this.dataSource.setInitialPoolSize(1);
+		this.dataSource.setMinPoolSize(1);
 	}
 
 	/**
@@ -178,6 +185,13 @@ public class WeatherDatabase {
 		} finally {
 			this.closeEverything(con, stmt, rs);
 		}
+	}
+
+	/**
+	 * Close the connection
+	 */
+	public void close() {
+		this.dataSource.close();
 	}
 
 	/**
