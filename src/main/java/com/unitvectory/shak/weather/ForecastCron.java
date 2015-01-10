@@ -60,7 +60,8 @@ public class ForecastCron {
 			JSONArray data = daily.getJSONArray("data");
 			for (int i = 0; i < data.length(); i++) {
 				JSONObject day = data.getJSONObject(i);
-				log.info(day.getString("summary"));
+				log.info(day.getString("time") + ": "
+						+ day.getString("summary"));
 				this.database.insert(location.getId(), day);
 			}
 		}
